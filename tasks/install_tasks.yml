@@ -1,0 +1,65 @@
+---
+# tasks file for pycharm
+
+- name: install tar on Fedora 24
+  dnf:
+    name: tar
+    state: present
+  when: ansible_distribution == "Fedora" and ansible_distribution_major_version == "24"
+
+- name: Create directories for Rider
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+  - "{{ rider_download_directory }}"
+  - "{{ rider_install_directory }}"
+  - "{{ rider_desktop_file_location | dirname }}"
+
+
+- name: Download Rider plugins
+  get_url:
+    url: "{{ rider_plugin_download_mirror }}{{ item }}"
+    dest: "{{ rider_download_directory }}"
+  register: rider_plugins_downloaded
+  with_items: "{{ rider_plugins }}"
+
+- name: Install Rider
+  unarchive:
+    src: "{{ rider_download_url}}"
+    dest: "{{ rider_download_directory }}"
+    copy: no
+    list_files: yes
+    creates: "{{ rider_location }}/bin/rider.sh"
+  register: unarchive_rider
+
+- name: Find Rider build number
+  set_fact:
+    rider_buildnumber: "{{ unarchive_rider.files[0].split('/')[0] }}"
+  when: unarchive_rider|changed
+  tags:
+    - skip_ansible_lint
+
+- debug:
+    msg: "Build number: {{ rider_buildnumber }}"
+  when: unarchive_rider|changed
+  tags:
+    - skip_ansible_lint
+
+- name: Move to final location
+  command: mv {{ rider_download_directory }}/{{ rider_buildnumber }} {{ rider_location }}
+  when: unarchive_rider|changed
+  tags:
+    - skip_ansible_lint
+
+
+- name: Install Rider Plugins
+  unarchive:
+    src: "{{ item.dest }}"
+    dest: "{{ rider_location }}/plugins"
+  with_items: "{{ rider_plugins_downloaded.results }}"
+
+- name: Create Rider desktop entry
+  template:
+    src: rider.desktop.j2
+    dest: "{{ rider_desktop_file_location }}"
