@@ -15,7 +15,7 @@ None
 Role Variables
 --------------
 
-    rider_version: RC-171.4456.1432
+    rider_version: 2020.1.4
     rider_download_mirror: https://download.jetbrains.com/resharper/
     rider_plugin_download_mirror: "https://plugins.jetbrains.com/plugin/download?updateId="
     rider_plugins: []

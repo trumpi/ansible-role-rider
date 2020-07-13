@@ -1,6 +1,6 @@
 ---
-rider_version: RC-171.4456.1432
-rider_download_mirror: https://download.jetbrains.com/resharper/
+rider_version: 2020.1.4
+rider_download_mirror: https://download.jetbrains.com/rider/
 rider_plugin_download_mirror: "https://plugins.jetbrains.com/plugin/download?updateId="
 rider_plugins: []
 rider_download_directory: /tmp
@@ -9,7 +9,7 @@ rider_install_directory: "{{ rider_user_dir | expanduser  }}/Tools"
 
 # calculated
 
-rider_install_file: "Rider-{{ rider_version }}.tar.gz"
+rider_install_file: "JetBrains.Rider-{{ rider_version }}.tar.gz"
 rider_download_url: "{{ rider_download_mirror }}{{ rider_install_file }}"
-rider_location: "{{ rider_install_directory }}/rider-{{ rider_version }}"
-rider_desktop_file_location: "{{ rider_user_dir | expanduser }}/.local/share/applications/rider-{{ rider_version }}.desktop"
+rider_location: "{{ rider_install_directory }}/rider"
+rider_desktop_file_location: "{{ rider_user_dir | expanduser }}/.local/share/applications/jetbrains-rider.desktop"

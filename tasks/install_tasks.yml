@@ -36,22 +36,27 @@
 - name: Find Rider build number
   set_fact:
     rider_buildnumber: "{{ unarchive_rider.files[0].split('/')[0] }}"
-  when: unarchive_rider|changed
+  when: unarchive_rider is changed
   tags:
     - skip_ansible_lint
 
 - debug:
     msg: "Build number: {{ rider_buildnumber }}"
-  when: unarchive_rider|changed
+  when: unarchive_rider is changed
   tags:
     - skip_ansible_lint
+
+- name: Remove previous folder
+  file:
+    path: "{{ rider_location }}"
+    state: absent
+  when: unarchive_rider is changed
 
 - name: Move to final location
-  command: mv {{ rider_download_directory }}/{{ rider_buildnumber }} {{ rider_location }}
-  when: unarchive_rider|changed
+  command: mv "{{ rider_download_directory }}/{{ rider_buildnumber }}" {{ rider_location }}
+  when: unarchive_rider is changed
   tags:
     - skip_ansible_lint
-
 
 - name: Install Rider Plugins
   unarchive:
